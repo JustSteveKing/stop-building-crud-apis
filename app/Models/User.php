@@ -2,27 +2,62 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Carbon\CarbonInterface;
 use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Laravel\Sanctum\PersonalAccessToken;
 
-#[Fillable(['name', 'email', 'password'])]
-#[Hidden(['password', 'remember_token'])]
+/**
+ * @property string $id
+ * @property string $name
+ * @property string $email
+ * @property string $password
+ * @property string|null $remember_token
+ * @property CarbonInterface|null $email_verified_at
+ * @property CarbonInterface $created_at
+ * @property CarbonInterface $updated_at
+ * @property-read Collection<int,Order> $orders
+ * @property-read Collection<int,PersonalAccessToken> $tokens
+ */
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens;
+    use HasFactory;
+    use HasUlids;
+    use Notifiable;
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
+    /** @var list<string> */
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'remember_token',
+        'email_verified_at',
+    ];
+
+    /** @var list<string> */
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    /** @return HasMany<Order,$this> */
+    public function orders(): HasMany
+    {
+        return $this->hasMany(
+            related: Order::class,
+            foreignKey: 'user_id',
+        );
+    }
+
+    /** @return array<string, string> */
     protected function casts(): array
     {
         return [
