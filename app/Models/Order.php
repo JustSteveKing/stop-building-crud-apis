@@ -3,6 +3,12 @@
 namespace App\Models;
 
 use App\Enums\OrderStatus;
+use App\StateMachines\Orders\OrderCancelledState;
+use App\StateMachines\Orders\OrderCookingState;
+use App\StateMachines\Orders\OrderDeliveredState;
+use App\StateMachines\Orders\OrderPendingState;
+use App\StateMachines\Orders\OrderReadyState;
+use App\StateMachines\Orders\OrderStateContract;
 use Carbon\CarbonInterface;
 use Database\Factories\OrderFactory;
 use Illuminate\Database\Eloquent\Collection;
@@ -55,6 +61,17 @@ class Order extends Model
             related: OrderItem::class,
             foreignKey: 'order_id',
         );
+    }
+
+    public function state(): OrderStateContract
+    {
+        return match ($this->status) {
+            OrderStatus::Pending => new OrderPendingState($this),
+            OrderStatus::Cooking => new OrderCookingState($this),
+            OrderStatus::Ready => new OrderReadyState($this),
+            OrderStatus::Delivered => new OrderDeliveredState($this),
+            OrderStatus::Cancelled => new OrderCancelledState($this),
+        };
     }
 
     /** @return array<string,class-string|string> */

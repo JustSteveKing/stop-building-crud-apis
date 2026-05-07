@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Orders;
 
 use App\Enums\OrderStatus;
+use App\Http\Payloads\Orders\CreatePayload;
 use App\Models\Order;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -26,5 +27,14 @@ class StoreRequest extends FormRequest
                 'max:255',
             ],
         ];
+    }
+
+    public function payload(): CreatePayload
+    {
+        return new CreatePayload(
+            status: OrderStatus::from(
+                value: $this->string('status')->toString(),
+            ),
+        );
     }
 }

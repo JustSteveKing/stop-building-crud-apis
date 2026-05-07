@@ -16,5 +16,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('orders', Orders\StoreController::class)->name('orders:store');
     Route::get('orders/{id}', Orders\ShowController::class)->name('orders:show');
     Route::put('orders/{id}', Orders\UpdateController::class)->name('orders:update');
+    Route::put('orders/{id}/cooking', Orders\Status\CookingController::class)->name('orders:cooking');
+    Route::put('orders/{id}/delivered', Orders\Status\DeliveredController::class)->name('orders:delivered');
     Route::delete('orders/{id}', Orders\DeleteController::class)->name('orders:delete');
 });

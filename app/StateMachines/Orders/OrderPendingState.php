@@ -8,10 +8,10 @@ use App\Enums\OrderStatus;
 
 final class OrderPendingState extends OrderState
 {
-    public function ready(): void
+    public function cooking(): void
     {
         $this->order->update([
-            'status' => OrderStatus::Ready,
+            'status' => OrderStatus::Cooking,
         ]);
     }
 
