@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthenticationController;
-use App\Http\Controllers\OrderController;
+use App\Http\Controllers\Orders;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -12,5 +12,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
         return $request->user();
     });
 
-    Route::apiResource('orders', OrderController::class);
+    Route::get('orders', Orders\IndexController::class)->name('orders:index');
+    Route::post('orders', Orders\StoreController::class)->name('orders:store');
+    Route::get('orders/{id}', Orders\ShowController::class)->name('orders:show');
+    Route::put('orders/{id}', Orders\UpdateController::class)->name('orders:update');
+    Route::delete('orders/{id}', Orders\DeleteController::class)->name('orders:delete');
 });
